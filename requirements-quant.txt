@@ -1,4 +1,4 @@
-# Calibration-based 4-bit quantizers. Install in the same env as requirements.txt,
-# but check `pip check` afterwards; these are the packages most likely to move torch.
+# GPTQ quantizer. Install in the same env as requirements.txt, then run `pip check`;
+# this is the package most likely to move torch. AutoAWQ is archived upstream and is
+# not used (see docs/engineering_log.md).
 gptqmodel
-autoawq

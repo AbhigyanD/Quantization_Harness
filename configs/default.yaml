@@ -1,0 +1,93 @@
+# Single source of truth for a run. Every script takes --config configs/default.yaml.
+# To switch to the fallback model, change model.base and re-run everything;
+# results are written under results/<model.slug>/ so runs don't overwrite each other.
+
+model:
+  base: Qwen/Qwen2.5-1.5B-Instruct
+  # fallback: meta-llama/Llama-3.2-1B-Instruct   (gated: needs HF_TOKEN)
+  slug: qwen2.5-1.5b-instruct
+  revision: main          # pin a commit hash here once you have one, for exact reproducibility
+
+seed: 1234
+
+paths:
+  models_dir: models      # gitignored: quantized checkpoints land here
+  results_dir: results    # tracked: raw JSON outputs
+
+# Variants. "fp16" is the baseline every other variant is compared against.
+variants:
+  fp16:
+    method: fp16
+  nf4:
+    method: bnb_nf4
+    double_quant: true
+    compute_dtype: float16     # T4 has no bf16
+  gptq:
+    method: gptq
+    bits: 4
+    group_size: 128
+    desc_act: false
+    sym: true
+
+# Calibration data for GPTQ. Taken from the wikitext-2 TRAIN split; perplexity
+# is measured on the TEST split, so calibration and evaluation text do not overlap.
+calibration:
+  dataset: wikitext
+  config: wikitext-2-raw-v1
+  split: train
+  num_samples: 128
+  seq_len: 512
+
+footprint:
+  # Fixed workload used to measure peak GPU memory during inference.
+  prompt_tokens: 512
+  new_tokens: 128
+  batch_size: 1
+
+perplexity:
+  dataset: wikitext
+  config: wikitext-2-raw-v1
+  split: test
+  max_length: 2048
+  stride: 1024
+  max_tokens: null        # null = whole test split; set an int to cap for a quick run
+
+# lm-evaluation-harness. Same settings for every variant, backend = hf.
+# Sample caps are small on purpose so the whole sweep fits a free-tier session;
+# the standard errors in the results show how much that costs in precision.
+lm_eval:
+  batch_size: 8
+  apply_chat_template: true
+  tasks:
+    gsm8k:
+      limit: 250
+      num_fewshot: 5
+      fewshot_as_multiturn: true
+      headline_metric: exact_match,flexible-extract
+    arc_challenge:
+      limit: 500
+      num_fewshot: 0
+      headline_metric: acc_norm,none
+    ifeval:
+      limit: 250
+      num_fewshot: 0
+      headline_metric: prompt_level_strict_acc,none
+    # long-context task is filled in after checking which tasks the installed lm_eval ships
+  gen_kwargs_max_tokens: 512
+
+# Go / no-go rule used by eval/compare.py. A quant is GO only if BOTH hold.
+thresholds:
+  max_mean_accuracy_drop_pts: 2.0     # mean over tasks of (baseline - variant), in percentage points
+  max_perplexity_increase_pct: 10.0   # relative to the FP16 baseline
+
+bench:
+  max_model_len: 4096
+  gpu_memory_utilization: 0.85
+  dtype: half
+  input_tokens: 256
+  output_tokens: 128
+  concurrency: [1, 4, 16, 32]
+  requests_per_level: 64      # per concurrency level (>= 2x the highest concurrency)
+  warmup_requests: 4
+  server_start_timeout_s: 600
+  port: 8000
