@@ -32,7 +32,7 @@ variants:
 # Calibration data for GPTQ. Taken from the wikitext-2 TRAIN split; perplexity
 # is measured on the TEST split, so calibration and evaluation text do not overlap.
 calibration:
-  dataset: wikitext
+  dataset: Salesforce/wikitext
   config: wikitext-2-raw-v1
   split: train
   num_samples: 128
@@ -45,7 +45,7 @@ footprint:
   batch_size: 1
 
 perplexity:
-  dataset: wikitext
+  dataset: Salesforce/wikitext
   config: wikitext-2-raw-v1
   split: test
   max_length: 2048
