@@ -113,7 +113,8 @@ def tail(path, n=40):
 
 def start_server(cfg, variant, log_path):
     b = cfg["bench"]
-    cmd = ["vllm", "serve", variant_path(cfg, variant),
+    sibling = os.path.join(os.path.dirname(sys.executable), "vllm")  # vLLM lives in its own venv
+    cmd = [sibling if os.path.exists(sibling) else "vllm", "serve", variant_path(cfg, variant),
            "--served-model-name", variant, "--dtype", b["dtype"],
            "--max-model-len", str(b["max_model_len"]),
            "--gpu-memory-utilization", str(b["gpu_memory_utilization"]),
