@@ -3,8 +3,9 @@
 A harness I built to measure what 4-bit quantization costs a small LLM. It takes
 Qwen2.5-1.5B-Instruct, makes two 4-bit versions (bitsandbytes NF4 and GPTQ), and compares both
 to the FP16 original on accuracy, perplexity, disk size, GPU memory, and vLLM serving speed.
-Everything is driven by `configs/default.yaml` and the scripts in this repo, and it is sized to
-fit a free Colab or Kaggle T4 (16 GB).
+Everything is driven by `configs/default.yaml` and the scripts in this repo, and the sample and batch
+sizes were chosen with a free Colab or Kaggle T4 (16 GB) in mind. Whether they actually fit has not
+been confirmed yet; see Status.
 
 ## Status
 
@@ -46,7 +47,7 @@ deprecated; see `docs/engineering_log.md`.
 | Long context | RULER `niah_multikey_1` at 4096 tokens, 100 generated samples, accuracy |
 | Perplexity | WikiText-2 test, whole split, window 2048, stride 1024 (own PyTorch code in `eval/perplexity.py`) |
 | Memory | measured in a fresh process per variant: GPU memory after load, and peak during a fixed generation (batch 1, 512 prompt tokens, 128 new tokens) |
-| vLLM | `max_model_len` 4096, 256 input / 128 output tokens, concurrency 1, 4, 16, 32, 64 requests per level |
+| vLLM | `max_model_len` 4096, 256 input / 128 output tokens, concurrency levels 1, 4, 16 and 32, 64 requests per level |
 
 `--limit N` in lm-eval takes the first N documents, so the subsets are the same for every variant
 but are not random samples. The sample sizes are small to fit a free GPU session. The tables show
