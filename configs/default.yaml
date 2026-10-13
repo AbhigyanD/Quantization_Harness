@@ -72,8 +72,15 @@ lm_eval:
       limit: 250
       num_fewshot: 0
       headline_metric: prompt_level_strict_acc,none
-    # long-context task is filled in after checking which tasks the installed lm_eval ships
-  gen_kwargs_max_tokens: 512
+    # Long context: RULER multi-key needle-in-a-haystack at 4096 tokens. Data is generated
+    # (seeded) and the haystack essays are downloaded from GitHub at run time.
+    niah_multikey_1:
+      limit: 100
+      num_fewshot: 0
+      metadata: '{"max_seq_lengths":[4096]}'
+      max_length: 6144          # room for the 4096-token prompt plus the answer
+      headline_metric: "4096,none"
+  max_gen_toks: 512             # applied to generation tasks (gsm8k, ifeval)
 
 # Go / no-go rule used by eval/compare.py. A quant is GO only if BOTH hold.
 thresholds:
