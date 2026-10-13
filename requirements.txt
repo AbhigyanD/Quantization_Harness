@@ -1,0 +1,12 @@
+# Core stack: quantization-free eval, perplexity, NF4, comparison table.
+# Install this first. GPTQ/AWQ and vLLM have their own files because they pin
+# conflicting torch versions (see docs/engineering_log.md).
+torch>=2.4
+transformers>=4.46
+accelerate>=1.0
+bitsandbytes>=0.44
+datasets>=3.0
+lm_eval[ifeval]>=0.4.5
+pyyaml>=6.0
+huggingface_hub>=0.25
+sentencepiece

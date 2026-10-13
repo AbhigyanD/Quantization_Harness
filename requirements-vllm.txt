@@ -1,0 +1,7 @@
+# vLLM pins its own torch. Install into a separate env (or a fresh Colab runtime)
+# from the quantizers to avoid resolver fights.
+vllm
+aiohttp>=3.9
+pyyaml>=6.0
+datasets>=3.0
+transformers

@@ -1,0 +1,30 @@
+# model weights and caches
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+.cache/
+hf_cache/
+huggingface/
+wandb/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# secrets
+.env
+*.token
+
+# large per-sample eval dumps (aggregate JSON in results/ is tracked)
+results/**/samples_*.jsonl
+results/**/server_*.log
+
+# notebooks
+.ipynb_checkpoints/
+.DS_Store
