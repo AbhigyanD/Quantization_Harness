@@ -52,11 +52,11 @@ def main():
     (d.parent / "bench_summary.md").write_text(table)
     print(table)
     if args.update_readme:
-        path = REPO_ROOT / "README.md"
-        text = path.read_text()
-        head, rest = text.split(START, 1)
-        _, tail = rest.split(END, 1)
-        path.write_text(f"{head}{START}\n{table}{END}{tail}")
+        for name in ("README.md", "MODEL_CARD.md"):
+            path = REPO_ROOT / name
+            head, rest = path.read_text().split(START, 1)
+            _, tail = rest.split(END, 1)
+            path.write_text(f"{head}{START}\n{table}{END}{tail}")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 Reads: lm_eval/<variant>/<task>/**/results_*.json, perplexity/<variant>.json,
 footprint/<variant>.json. Writes comparison.{md,csv,json} next to them, and can splice the
-markdown table into README.md between the RESULTS markers. Nothing is estimated: a missing
+markdown table into README.md and MODEL_CARD.md between the RESULTS markers. Nothing is estimated: a missing
 input shows as n/a, and a variant with missing inputs is INCOMPLETE rather than go/no-go.
 
 Go/no-go rule (thresholds from the config): GO only if
@@ -162,7 +162,7 @@ def splice_readme(path, table):
 
 def main():
     p = base_parser(__doc__)
-    p.add_argument("--update-readme", action="store_true")
+    p.add_argument("--update-readme", action="store_true", help="splice tables into README.md and MODEL_CARD.md")
     p.add_argument("--results-root", help="override results dir (tests only)")
     args = p.parse_args()
     cfg = load_config(args.config)
@@ -181,7 +181,8 @@ def main():
     (out / "comparison.json").write_text(json.dumps({"rows": rows, "verdicts": verdicts}, indent=2))
     print(table)
     if args.update_readme:
-        splice_readme(REPO_ROOT / "README.md", table)
+        for name in ("README.md", "MODEL_CARD.md"):
+            splice_readme(REPO_ROOT / name, table)
 
 
 if __name__ == "__main__":
