@@ -1,6 +1,7 @@
 """Disk-size and GPU-memory measurement helpers."""
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -43,7 +44,7 @@ def gpu_info():
 
 
 def pip_freeze():
-    out = subprocess.run(["python", "-m", "pip", "freeze"], capture_output=True, text=True)
+    out = subprocess.run([sys.executable, "-m", "pip", "freeze"], capture_output=True, text=True)
     return out.stdout.splitlines()
 
 
