@@ -35,3 +35,10 @@ GPU-run entries are added after the Colab/Kaggle runs.
   a clear message if it is missing. Locally I set `SSL_CERT_FILE` to the `certifi` bundle.
 - **Note:** RULER also downloads its haystack essays from GitHub at run time, so the eval needs
   internet access.
+
+## `load_dataset("wikitext", ...)` fails with datasets 5.x **(local)**
+- **Error:** `HfUriError: Repository id must be 'namespace/name', got 'wikitext'` from
+  `eval/perplexity.py`.
+- **Cause:** the short dataset name is no longer resolved by the version of `datasets` that pip
+  installed (5.1.0 at the time).
+- **Fix:** use `Salesforce/wikitext` in the perplexity and calibration config.
